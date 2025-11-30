@@ -1,7 +1,11 @@
 import { Link } from 'react-router'
 import { ShoppingCart } from 'lucide-react'
+import { useCartStore } from '../store/cartStore'
 
 const Navbar = () => {
+  const { items } = useCartStore()
+  const cartCount = items.reduce((acc, item) => acc + item.quantity, 0)
+
   return (
     <nav className='flex justify-between items-center p-3 lg:p-10 border-b border-[#EAEAEA]'>
       <Link to='/' className='flex items-center gap-2 lg:gap-4'>
@@ -15,12 +19,14 @@ const Navbar = () => {
         </div>
       </Link>
 
-      <div className='flex items-center gap-8'>
-        <Link to='/cart' className='flex items-center gap-1'>
-          <ShoppingCart size={20} className='text-[#5C5C5C]' />
-          <p className='text-sm font-semibold text-[#5C5C5C]'>Cart</p>
-        </Link>
-      </div>
+      <Link to='/cart' className='flex items-center gap-1 relative'>
+        <ShoppingCart size={25} className='text-[#5C5C5C]' />
+        {cartCount > 0 && (
+          <span className='absolute bottom-3.5 left-4 flex min-h-5 min-w-5 px-1 items-center justify-center rounded-full bg-red-500 text-[10px] text-white'>
+            {cartCount}
+          </span>
+        )}
+      </Link>
     </nav>
   )
 }
