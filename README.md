@@ -5,7 +5,8 @@ A modern, responsive e-commerce frontend application featuring a product carouse
 ![iStore Preview](./public/preview.png)
 
 ## 🔗 Live Demo
-https://test.com
+
+https://vladp456.github.io/product-carousel/
 
 ---
 
