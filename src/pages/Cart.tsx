@@ -1,14 +1,16 @@
+import { useMemo } from 'react'
+import { Link } from 'react-router'
 import { ChevronRight, Minus, Plus } from 'lucide-react'
 import { useCartStore } from '../store/cartStore'
-import { Link } from 'react-router'
+import {
+  calculateItemPrice,
+  calculateCartTotal
+} from '../utils/priceCalculations'
 
 const Cart = () => {
   const { items, removeItem, addItem, clearCart } = useCartStore()
-  const total = items.reduce((acc, item) => {
-    const hasDiscount = item.quantity >= 5
-    const price = hasDiscount ? item.product.price * 0.9 : item.product.price
-    return acc + price * item.quantity
-  }, 0)
+
+  const total = useMemo(() => calculateCartTotal(items), [items])
 
   if (items.length === 0) {
     return (
@@ -18,6 +20,7 @@ const Cart = () => {
         <Link to='/' className='w-full'>
           <button
             type='button'
+            aria-label='Go Back'
             className='flex items-center justify-center w-full h-8 rounded-md bg-black text-white border border-gray-700 hover:bg-gray-800 cursor-pointer'
           >
             Go Back
@@ -44,8 +47,8 @@ const Cart = () => {
 
         <ul className='space-y-3'>
           {items.map(item => {
-            const hasDiscount = item.quantity >= 5
-            const discountedPrice = item.product.price * 0.9
+            const { hasDiscount, totalPrice, originalTotal } =
+              calculateItemPrice(item.product.price, item.quantity)
 
             return (
               <li
@@ -58,23 +61,17 @@ const Cart = () => {
                   {hasDiscount ? (
                     <div className='flex flex-col items-center gap-1'>
                       <p className='font-bold whitespace-nowrap'>
-                        {(discountedPrice * item.quantity).toLocaleString(
-                          'uk-UA',
-                          {
-                            maximumFractionDigits: 0
-                          }
-                        )}{' '}
+                        {totalPrice.toLocaleString('uk-UA', {
+                          maximumFractionDigits: 0
+                        })}{' '}
                         ₴
                       </p>
 
                       <div className='flex items-center gap-1'>
                         <p className='text-sm line-through whitespace-nowrap'>
-                          {(item.product.price * item.quantity).toLocaleString(
-                            'uk-UA',
-                            {
-                              maximumFractionDigits: 0
-                            }
-                          )}{' '}
+                          {originalTotal.toLocaleString('uk-UA', {
+                            maximumFractionDigits: 0
+                          })}{' '}
                           ₴
                         </p>
 
@@ -85,12 +82,9 @@ const Cart = () => {
                     </div>
                   ) : (
                     <p className='font-bold whitespace-nowrap'>
-                      {(item.product.price * item.quantity).toLocaleString(
-                        'uk-UA',
-                        {
-                          maximumFractionDigits: 0
-                        }
-                      )}{' '}
+                      {totalPrice.toLocaleString('uk-UA', {
+                        maximumFractionDigits: 0
+                      })}{' '}
                       ₴
                     </p>
                   )}
@@ -99,6 +93,7 @@ const Cart = () => {
                 <div className='flex items-center gap-2 mt-1'>
                   <button
                     type='button'
+                    aria-label='Decrease quantity'
                     className='flex items-center justify-center w-8 h-8 rounded-md bg-white text-black border border-gray-300 hover:bg-gray-100 cursor-pointer'
                     onClick={() => removeItem(item.product.id)}
                   >
@@ -109,8 +104,11 @@ const Cart = () => {
 
                   <button
                     type='button'
+                    aria-label='Increase quantity'
                     className='flex items-center justify-center w-8 h-8 rounded-md bg-black text-white border border-gray-700 hover:bg-gray-800 cursor-pointer'
-                    onClick={() => addItem({ ...item, quantity: 1 })}
+                    onClick={() =>
+                      addItem({ product: item.product, quantity: 1 })
+                    }
                   >
                     <Plus size={18} />
                   </button>
@@ -132,6 +130,7 @@ const Cart = () => {
       <div className='max-w-md mx-auto'>
         <button
           type='button'
+          aria-label='Proceed to Payment'
           className='flex items-center justify-center w-full px-4 py-2 rounded-md bg-black text-white border border-gray-700 hover:bg-gray-800 cursor-pointer'
         >
           Proceed to Payment
@@ -139,6 +138,7 @@ const Cart = () => {
 
         <button
           type='button'
+          aria-label='Clear Cart'
           onClick={() => clearCart()}
           className='w-full mt-1 flex items-center justify-center px-4 py-2 rounded-md bg-black text-white border border-gray-700 hover:bg-gray-800 cursor-pointer'
         >

@@ -1,29 +1,22 @@
+import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
+import type { Swiper as SwiperType } from 'swiper'
 import { products } from '../data/products'
 import ProductCard from './ProductCard'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { useEffect, useRef, useState } from 'react'
 
 const ProductCarousel = () => {
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024)
-  const swiperRef = useRef<any>(null)
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024)
-    }
-    window.addEventListener('resize', handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
+  const swiperRef = useRef<SwiperType | null>(null)
 
   return (
     <div
-      onMouseEnter={() => swiperRef.current?.autoplay.stop()}
-      onMouseLeave={() => swiperRef.current?.autoplay.start()}
+      onMouseEnter={() => swiperRef.current?.autoplay?.stop()}
+      onMouseLeave={() => swiperRef.current?.autoplay?.start()}
     >
       <Swiper
         onSwiper={swiper => (swiperRef.current = swiper)}

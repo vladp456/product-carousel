@@ -1,0 +1,3 @@
+export const DISCOUNT_THRESHOLD = 6
+export const DISCOUNT_PERCENTAGE = 0.1 // 10% off
+export const DISCOUNT_MULTIPLIER = 1 - DISCOUNT_PERCENTAGE // 0.9
