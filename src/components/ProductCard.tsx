@@ -45,7 +45,7 @@ const ProductCard = ({ product }: Props) => {
             ₴
           </p>
           <p className='text-xs text-white border border-green-600 bg-green-600 rounded-md px-1'>
-            10% off from {DISCOUNT_THRESHOLD}+ items
+            10% off from {DISCOUNT_THRESHOLD} items
           </p>
         </div>
 
